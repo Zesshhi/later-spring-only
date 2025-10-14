@@ -2,40 +2,32 @@ package ru.practicum.user;
 
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
-public class UserRepositoryImpl implements UserRepository {
+public class InMemoryUserRepository {
     private final Map<Long, User> users = new HashMap<>(5);
 
-    @Override
     public List<User> findAll() {
         return new ArrayList<>(users.values());
     }
 
-    @Override
     public User save(User user) {
         user.setId(getId());
         users.put(user.getId(), user);
         return user;
     }
 
-    @Override
     public User update(Long id, User user) {
         users.replace(user.getId(), user);
         user.setId(id);
         return user;
     }
 
-    @Override
-    public User get(Long id) {
-        return users.get(id);
+    public Optional<User> get(Long id) {
+        return Optional.ofNullable(users.get(id));
     }
 
-    @Override
     public void delete(Long id) {
         users.remove(id);
     }

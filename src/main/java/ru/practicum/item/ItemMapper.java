@@ -8,7 +8,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemMapper {
     public static ItemDto mapToItemDto(Item item) {
-        return new ItemDto(item.getId(), item.getUserId(), item.getUrl(), item.getName(), item.getDescription(), item.isAvailable());
+        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.isAvailable(), item.getRequestId());
     }
 
     public static List<ItemDto> mapToItemDto(Iterable<Item> items) {
@@ -18,15 +18,16 @@ public class ItemMapper {
         return itemDtos;
     }
 
-    public static Item mapToNewItem(ItemDto itemDto) {
+    public static Item mapToNewItem(ItemDto itemDto, Long userId, Long requestId) {
         Item item = new Item();
+
         item.setId(itemDto.getId());
-        item.setUserId(itemDto.getUserId());
-        item.setUrl(itemDto.getUrl());
+        item.setOwnerId(userId);
+        item.setRequestId(requestId);
+
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.isAvailable());
-
+        item.setAvailable(itemDto.getAvailable());
         return item;
     }
 

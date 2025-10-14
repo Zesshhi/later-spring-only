@@ -33,4 +33,16 @@ public class ErrorHandler {
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler({NotFoundException.class})
+    protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
+        return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler({PermissionDeniedException.class})
+    protected ResponseEntity<Object> handlePermissionDeniedException(PermissionDeniedException ex, WebRequest request) {
+        ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
+        return new ResponseEntity<>(errorDto, HttpStatus.FORBIDDEN);
+    }
 }
