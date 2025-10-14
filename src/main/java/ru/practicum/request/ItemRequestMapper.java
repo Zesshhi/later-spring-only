@@ -1,8 +1,6 @@
 package ru.practicum.request;
 
 import lombok.NoArgsConstructor;
-import ru.practicum.user.User;
-import ru.practicum.user.UserDto;
 
 import java.util.ArrayList;
 import java.util.List;
