@@ -1,9 +1,13 @@
 package ru.practicum.item;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-class Item {
+@NoArgsConstructor
+@AllArgsConstructor
+public class ItemDto {
     private Long id;
     private Long userId;
     private String url;

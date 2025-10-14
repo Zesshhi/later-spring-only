@@ -1,5 +1,6 @@
 package ru.practicum.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,15 +10,30 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @PostMapping
-    public User saveNewUser(@RequestBody User user) {
+    public UserDto saveNewUser(@Valid @RequestBody UserDto user) {
         return userService.saveUser(user);
+    }
+
+    @PatchMapping("/{id}")
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto user) {
+        return userService.updateUser(id, user);
+    }
+
+    @GetMapping("/{id}")
+    public UserDto getUser(@PathVariable Long id) {
+        return userService.getUser(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
     }
 }
