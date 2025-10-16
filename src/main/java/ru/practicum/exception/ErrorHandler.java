@@ -17,24 +17,28 @@ public class ErrorHandler {
 
     @ExceptionHandler({InvalidDataException.class})
     protected ResponseEntity<Object> handleInvalidDataException(InvalidDataException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({InvalidEmailException.class})
     protected ResponseEntity<Object> handleInvalidEmailException(InvalidEmailException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({Exception.class})
     protected ResponseEntity<Object> handleException(Exception ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({NotFoundException.class})
     protected ResponseEntity<Object> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.NOT_FOUND);
     }
@@ -42,6 +46,7 @@ public class ErrorHandler {
 
     @ExceptionHandler({PermissionDeniedException.class})
     protected ResponseEntity<Object> handlePermissionDeniedException(PermissionDeniedException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.FORBIDDEN);
     }

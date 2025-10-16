@@ -3,7 +3,6 @@ package ru.practicum.user;
 
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -12,10 +11,8 @@ public class UserMapper {
         return new UserDto(user.getId(), user.getEmail(), user.getName());
     }
 
-    public static List<UserDto> mapToUserDto(Iterable<User> users) {
-        List<UserDto> userDtos = new ArrayList<>();
-        users.forEach(user -> userDtos.add(mapToUserDto(user)));
-
+    public static List<UserDto> mapToUserDto(List<User> users) {
+        List<UserDto> userDtos = users.stream().map(UserMapper::mapToUserDto).toList();
         return userDtos;
     }
 

@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 @Repository
 public class InMemoryItemRepository {
     private final Map<Long, Item> items = new HashMap<>(5);
+    private final Map<Long, List<Item>> itemsByOwner = new HashMap<>();
 
 
     public Item save(Item item) {
         item.setId(getId());
         items.put(item.getId(), item);
+        itemsByOwner.computeIfAbsent(item.getOwnerId(), k -> new ArrayList<>()).add(item);
         return item;
     }
 
@@ -24,9 +26,7 @@ public class InMemoryItemRepository {
 
 
     public List<Item> getByOwner(Long userId) {
-        return items.values().stream()
-                .filter(item -> item.getOwnerId().equals(userId))
-                .collect(Collectors.toList());
+        return itemsByOwner.getOrDefault(userId, List.of());
     }
 
 

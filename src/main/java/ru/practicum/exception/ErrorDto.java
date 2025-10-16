@@ -1,15 +1,12 @@
 package ru.practicum.exception;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class ErrorDto {
     String error;
     String message;
-
-    public ErrorDto(String error, String message) {
-        this.error = error;
-        this.message = message;
-    }
 }

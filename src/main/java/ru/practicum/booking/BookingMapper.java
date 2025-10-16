@@ -11,10 +11,8 @@ public class BookingMapper {
         return new BookingDto(booking.getId(), booking.getStartDate(), booking.getEndDate(), booking.getItemId(), booking.isApproved());
     }
 
-    public static List<BookingDto> mapToBookingDto(Iterable<Booking> bookings) {
-        List<BookingDto> bookingDtos = new ArrayList<>();
-        bookings.forEach(booking -> bookingDtos.add(mapToBookingDto(booking)));
-
+    public static List<BookingDto> mapToBookingDto(List<Booking> bookings) {
+        List<BookingDto> bookingDtos = bookings.stream().map(BookingMapper::mapToBookingDto).toList();
         return bookingDtos;
     }
 

@@ -12,10 +12,8 @@ public class ItemRequestMapper {
         return new ItemRequestDto(itemRequest.getId(), itemRequest.getUserId(), itemRequest.getDescription());
     }
 
-    public static List<ItemRequestDto> mapToItemRequestDto(Iterable<ItemRequest> itemRequests) {
-        List<ItemRequestDto> itemRequestDtos = new ArrayList<>();
-        itemRequests.forEach(itemRequest -> itemRequestDtos.add(mapToItemRequestDto(itemRequest)));
-
+    public static List<ItemRequestDto> mapToItemRequestDto(List<ItemRequest> itemRequests) {
+        List<ItemRequestDto> itemRequestDtos = itemRequests.stream().map(ItemRequestMapper::mapToItemRequestDto).toList();
         return itemRequestDtos;
     }
 

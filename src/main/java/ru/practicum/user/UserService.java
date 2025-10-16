@@ -48,13 +48,9 @@ public class UserService {
 
     public UserDto getUser(Long id) {
 
-        Optional<User> user = repository.get(id);
+        User user = repository.get(id).orElseThrow(() ->  new NotFoundException("Пользователь с ID=" + id + " не найден"));
 
-        if (!user.isPresent()) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-
-        return UserMapper.mapToUserDto(user.get());
+        return UserMapper.mapToUserDto(user);
     }
 
     public void validateEmail(String email) {

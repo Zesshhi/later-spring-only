@@ -17,13 +17,14 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+    private final String USER_HEADER_NAME = "X-Sharer-User-Id";
 
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(
             @Valid @RequestBody ItemDto itemDto,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_HEADER_NAME) Long userId
     ) {
         return itemService.saveItem(itemDto, userId);
     }
@@ -32,7 +33,7 @@ public class ItemController {
     public ItemDto updateItem(
             @PathVariable Long itemId,
             @RequestBody ItemDto itemDto,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(USER_HEADER_NAME) Long userId
     ) {
         return itemService.updateItem(itemId, itemDto, userId);
     }
@@ -45,7 +46,7 @@ public class ItemController {
 
 
     @GetMapping
-    public List<ItemDto> getItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getItemsByOwner(@RequestHeader(USER_HEADER_NAME) Long userId) {
         return itemService.getItemsByOwner(userId);
     }
 

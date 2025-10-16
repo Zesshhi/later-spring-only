@@ -11,10 +11,8 @@ public class ItemMapper {
         return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.isAvailable(), item.getRequestId());
     }
 
-    public static List<ItemDto> mapToItemDto(Iterable<Item> items) {
-        List<ItemDto> itemDtos = new ArrayList<>();
-        items.forEach(item -> itemDtos.add(mapToItemDto(item)));
-
+    public static List<ItemDto> mapToItemDto(List<Item> items) {
+        List<ItemDto> itemDtos = items.stream().map(ItemMapper::mapToItemDto).toList();
         return itemDtos;
     }
 
