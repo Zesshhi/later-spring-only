@@ -1,30 +1,58 @@
 package ru.practicum.item;
 
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-class ItemController {
-    private final ItemService itemService;
+@Slf4j
+public class ItemController {
 
-    @GetMapping
-    public List<Item> get(@RequestHeader("X-Later-User-Id") long userId) {
-        return itemService.getItems(userId);
-    }
+    private final ItemService itemService;
+    private final String USER_HEADER_NAME = "X-Sharer-User-Id";
+
 
     @PostMapping
-    public Item add(@RequestHeader("X-Later-User-Id") Long userId,
-                    @RequestBody Item item) {
-        return itemService.addNewItem(userId, item);
+    @ResponseStatus(HttpStatus.CREATED)
+    public ItemDto createItem(
+            @Valid @RequestBody ItemDto itemDto,
+            @RequestHeader(USER_HEADER_NAME) Long userId
+    ) {
+        return itemService.saveItem(itemDto, userId);
     }
 
-    @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader("X-Later-User-Id") long userId,
-                           @PathVariable(name = "itemId") long itemId) {
-        itemService.deleteItem(userId, itemId);
+    @PatchMapping("/{itemId}")
+    public ItemDto updateItem(
+            @PathVariable Long itemId,
+            @RequestBody ItemDto itemDto,
+            @RequestHeader(USER_HEADER_NAME) Long userId
+    ) {
+        return itemService.updateItem(itemId, itemDto, userId);
+    }
+
+
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@PathVariable Long itemId) {
+        return itemService.getItem(itemId);
+    }
+
+
+    @GetMapping
+    public List<ItemDto> getItemsByOwner(@RequestHeader(USER_HEADER_NAME) Long userId) {
+        return itemService.getItemsByOwner(userId);
+    }
+
+
+    @GetMapping("/search")
+    public List<ItemDto> searchItems(@RequestParam(required = false) String text) {
+        return itemService.searchItems(text);
     }
 }
