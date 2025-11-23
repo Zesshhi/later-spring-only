@@ -50,4 +50,11 @@ public class ErrorHandler {
         ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
         return new ResponseEntity<>(errorDto, HttpStatus.FORBIDDEN);
     }
+
+    @ExceptionHandler({ObjectNotAvailableException.class})
+    protected ResponseEntity<Object> handleObjectNotAvailableException(ObjectNotAvailableException ex, WebRequest request) {
+        log.error(ex.getMessage(), ex);
+        ErrorDto errorDto = returnErrorData(ex.getMessage(), ex);
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -7,12 +7,11 @@ import ru.practicum.exception.InvalidEmailException;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final InMemoryUserRepository repository;
+    private final UserRepository repository;
 
     public List<UserDto> getAllUsers() {
         return repository.findAll().stream().map(UserMapper::mapToUserDto).toList();
@@ -25,32 +24,33 @@ public class UserService {
         return UserMapper.mapToUserDto(newUser);
     }
 
-    public UserDto updateUser(Long id, UserDto user) {
+    public UserDto updateUser(Long id, UserDto newUser) {
+        UserDto user = getUser(id);
 
-        UserDto oldUser = getUser(id);
-
-        if (user.getName() == null) {
-            user.setName(oldUser.getName());
-        }
-        if (user.getEmail() == null) {
-            user.setEmail(oldUser.getEmail());
-        } else {
-            emailExists(user.getEmail());
+        if (newUser.getName() != null) {
+            user.setName(newUser.getName());
         }
 
-        User updatedUser = repository.update(id, UserMapper.mapToNewUser(user));
+        if (newUser.getEmail() != null) {
+            emailExists(newUser.getEmail());
+            user.setEmail(newUser.getEmail());
+        }
+
+
+        User updatedUser = repository.save(UserMapper.mapToNewUser(user));
         return UserMapper.mapToUserDto(updatedUser);
     }
 
     public void deleteUser(Long id) {
-        repository.delete(id);
+        repository.deleteById(id);
     }
 
     public UserDto getUser(Long id) {
+        return UserMapper.mapToUserDto(getUserById(id));
+    }
 
-        User user = repository.get(id).orElseThrow(() ->  new NotFoundException("Пользователь с ID=" + id + " не найден"));
-
-        return UserMapper.mapToUserDto(user);
+    public User getUserById(Long id) {
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь с ID=" + id + " не найден"));
     }
 
     public void validateEmail(String email) {
@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public void emailExists(String email) {
-        boolean emailExists = repository.findAll().stream().anyMatch(u -> u.getEmail().equals(email));
+        boolean emailExists = repository.existsByEmail(email);
 
         if (emailExists) {
             throw new InvalidEmailException("Email already exists");

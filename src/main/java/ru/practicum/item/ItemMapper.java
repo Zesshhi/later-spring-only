@@ -1,27 +1,54 @@
 package ru.practicum.item;
 
 import lombok.NoArgsConstructor;
+import ru.practicum.booking.dto.BookingInItemDto;
+import ru.practicum.item.comment.dto.CommentDto;
+import ru.practicum.item.dto.ItemDto;
+import ru.practicum.item.dto.ItemResponseDto;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
 public class ItemMapper {
     public static ItemDto mapToItemDto(Item item) {
-        return new ItemDto(item.getId(), item.getName(), item.getDescription(), item.isAvailable(), item.getRequestId());
+        return new ItemDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.isAvailable(),
+                item.getRequest() != null ? item.getRequest().getId() : null
+        );
     }
+
+    public static ItemResponseDto mapToItemDto(
+            Item item,
+            BookingInItemDto lastBooking,
+            BookingInItemDto nextBooking,
+            List<CommentDto> comments
+    ) {
+        return new ItemResponseDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.isAvailable(),
+                item.getRequest() != null ? item.getRequest().getId() : null,
+                lastBooking,
+                nextBooking,
+                comments != null ? comments : Collections.emptyList()
+        );
+    }
+
 
     public static List<ItemDto> mapToItemDto(List<Item> items) {
         List<ItemDto> itemDtos = items.stream().map(ItemMapper::mapToItemDto).toList();
         return itemDtos;
     }
 
-    public static Item mapToNewItem(ItemDto itemDto, Long userId, Long requestId) {
+    public static Item mapToNewItem(ItemDto itemDto) {
         Item item = new Item();
 
         item.setId(itemDto.getId());
-        item.setOwnerId(userId);
-        item.setRequestId(requestId);
 
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
