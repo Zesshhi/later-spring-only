@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.booking.dto.BookingCreateDto;
-import ru.practicum.booking.dto.BookingInItemDto;
 import ru.practicum.booking.dto.BookingResponseDto;
 import ru.practicum.exception.InvalidDataException;
 import ru.practicum.exception.NotFoundException;
@@ -28,7 +27,6 @@ public class BookingService {
     private final ItemRepository itemRepository;
     private final UserService userService;
 
-    @Transactional
     public BookingResponseDto createBooking(BookingCreateDto bookingDto, Long bookerId) {
 
         if (bookingDto.getStart().isEqual(bookingDto.getEnd()) || bookingDto.getStart().isAfter(bookingDto.getEnd())) {
@@ -53,7 +51,6 @@ public class BookingService {
         return BookingMapper.mapToBookingDto(booking);
     }
 
-    @Transactional
     public BookingResponseDto updateBookingItemStatusByOwner(Long ownerId, Long bookingId, Boolean approved) {
         Booking booking = getBookingById(bookingId);
 
@@ -68,7 +65,6 @@ public class BookingService {
         return BookingMapper.mapToBookingDto(booking);
     }
 
-    @Transactional
     public BookingResponseDto getBooking(Long requestUserId, Long id) {
 
         Booking booking = getBookingById(id);
@@ -80,13 +76,11 @@ public class BookingService {
         return BookingMapper.mapToBookingDto(booking);
     }
 
-    @Transactional
     public Booking getBookingById(Long id) {
         return bookingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Booking id = " + id + " не найдена"));
     }
 
-    @Transactional
     public List<BookingResponseDto> getBookingsByBooker(Long requestUserId, String state) {
 
         userService.getUserById(requestUserId);
@@ -108,7 +102,10 @@ public class BookingService {
         return BookingMapper.mapToBookingDto(bookings);
     }
 
-    @Transactional
+    public List<Booking> getAllBookingsByOwner(Long requestUserId) {
+        return bookingRepository.findAllByItem_Owner_IdOrderByStartDesc(requestUserId);
+    }
+
     public List<BookingResponseDto> getBookingsByOwner(Long requestUserId, String state) {
 
         userService.getUserById(requestUserId);
@@ -144,35 +141,6 @@ public class BookingService {
         if (userBookings.isEmpty()) {
             throw new InvalidDataException("Пользователь ID " + userId + " не бронировал вещь ID " + itemId);
         }
-    }
-
-    public BookingInItemDto getLastBooking(
-            Long itemId,
-            BookingStatus status,
-            LocalDateTime currentTime
-    ) {
-        return BookingMapper.mapToBookingInItemDto(
-                bookingRepository.findFirstByItem_IdAndStatusAndStartBeforeOrderByEndDesc(
-                        itemId,
-                        status,
-                        currentTime
-                )
-        );
-    }
-
-
-    public BookingInItemDto getNextBooking(
-            Long itemId,
-            BookingStatus status,
-            LocalDateTime currentTime
-    ) {
-        return BookingMapper.mapToBookingInItemDto(
-                bookingRepository.findFirstByItem_IdAndStatusAndStartAfterOrderByStartAsc(
-                        itemId,
-                        status,
-                        currentTime
-                )
-        );
     }
 
 }

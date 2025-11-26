@@ -8,6 +8,7 @@ import ru.practicum.item.dto.ItemResponseDto;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 public class ItemMapper {
@@ -23,8 +24,8 @@ public class ItemMapper {
 
     public static ItemResponseDto mapToItemDto(
             Item item,
-            BookingInItemDto lastBooking,
-            BookingInItemDto nextBooking,
+            Optional<BookingInItemDto> lastBooking,
+            Optional<BookingInItemDto> nextBooking,
             List<CommentDto> comments
     ) {
         return new ItemResponseDto(
@@ -33,8 +34,8 @@ public class ItemMapper {
                 item.getDescription(),
                 item.isAvailable(),
                 item.getRequest() != null ? item.getRequest().getId() : null,
-                lastBooking,
-                nextBooking,
+                lastBooking != null && lastBooking.isPresent() ? lastBooking.get() : null,
+                nextBooking != null && nextBooking.isPresent() ? nextBooking.get() : null,
                 comments != null ? comments : Collections.emptyList()
         );
     }

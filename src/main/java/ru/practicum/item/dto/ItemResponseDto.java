@@ -12,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemResponseDto {
-    BookingInItemDto lastBooking;
-    BookingInItemDto nextBooking;
     private Long id;
     private String name;
     private String description;
     private Boolean available;
     private Long requestId;
+    BookingInItemDto lastBooking;
+    BookingInItemDto nextBooking;
     private List<CommentDto> comments;
 }

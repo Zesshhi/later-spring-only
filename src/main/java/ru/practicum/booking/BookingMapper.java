@@ -8,7 +8,6 @@ import ru.practicum.item.ItemMapper;
 import ru.practicum.user.UserMapper;
 
 import java.util.List;
-import java.util.Optional;
 
 @NoArgsConstructor
 public class BookingMapper {
@@ -37,12 +36,14 @@ public class BookingMapper {
         return booking;
     }
 
-    public static BookingInItemDto mapToBookingInItemDto(Optional<Booking> booking) {
-        return booking.map(value -> new BookingInItemDto(
-                value.getId(),
-                value.getBooker().getId(),
-                value.getStart(),
-                value.getEnd()
-        )).orElse(null);
+    public static BookingInItemDto mapToBookingInItemDto(Booking booking) {
+        return new BookingInItemDto(
+                booking.getId(),
+                booking.getStart(),
+                booking.getEnd(),
+                booking.getStatus(),
+                UserMapper.mapToUserDto(booking.getBooker()),
+                ItemMapper.mapToItemDto(booking.getItem())
+        );
     }
 }

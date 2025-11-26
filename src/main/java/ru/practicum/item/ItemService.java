@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.booking.BookingMapper;
 import ru.practicum.booking.BookingService;
 import ru.practicum.booking.BookingStatus;
 import ru.practicum.booking.dto.BookingInItemDto;
@@ -21,9 +22,7 @@ import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -85,7 +84,6 @@ public class ItemService {
         }
     }
 
-    @Transactional
     public ItemResponseDto getItem(Long userId, Long itemId) {
 
         Item item = getItemById(itemId);
@@ -93,19 +91,22 @@ public class ItemService {
         List<CommentDto> comments = getCommentsByItemId(itemId);
 
         if (item.getOwner().getId().equals(userId)) {
-            return getItemResponseDtoWithBookings(item, comments);
+            Map<Long, List<BookingInItemDto>> bookingsMap = getOwnerBookings(userId);
+            return getItemResponseDtoWithBookings(
+                    item,
+                    comments,
+                    bookingsMap.getOrDefault(item.getId(), Collections.emptyList())
+            );
         }
 
         return ItemMapper.mapToItemDto(item, null, null, comments);
     }
 
-    @Transactional
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Item id = " + itemId + " not found"));
     }
 
-    @Transactional
     public List<ItemResponseDto> getItemsByOwner(Long userId) {
 
         userService.getUser(userId);
@@ -113,10 +114,15 @@ public class ItemService {
         List<Item> items = itemRepository.findByOwner_Id(userId).stream().toList();
 
         Map<Long, List<CommentDto>> commentsMap = getCommentsByItemIds(items);
+        Map<Long, List<BookingInItemDto>> bookingsMap = getOwnerBookings(userId);
 
         List<ItemResponseDto> itemDtos = items.stream()
                 .map(item -> getItemResponseDtoWithBookings(
-                        item, commentsMap.getOrDefault(item.getId(), Collections.emptyList())))
+                                item,
+                                commentsMap.getOrDefault(item.getId(), Collections.emptyList()),
+                                bookingsMap.getOrDefault(item.getId(), Collections.emptyList())
+                        )
+                )
                 .toList();
 
         return itemDtos;
@@ -160,10 +166,31 @@ public class ItemService {
                 .collect(Collectors.groupingBy(CommentDto::getId));
     }
 
-    private ItemResponseDto getItemResponseDtoWithBookings(Item item, List<CommentDto> comments) {
+    private Map<Long, List<BookingInItemDto>> getOwnerBookings(Long ownerId) {
+        return bookingService.getAllBookingsByOwner(ownerId)
+                .stream()
+                .map(BookingMapper::mapToBookingInItemDto)
+                .collect(Collectors.groupingBy(BookingInItemDto::getId));
+    }
+
+    private ItemResponseDto getItemResponseDtoWithBookings(Item item, List<CommentDto> comments, List<BookingInItemDto> bookings) {
         LocalDateTime currentDate = LocalDateTime.now();
-        BookingInItemDto lastBooking = bookingService.getLastBooking(item.getId(), BookingStatus.APPROVED, currentDate);
-        BookingInItemDto nextBooking = bookingService.getNextBooking(item.getId(), BookingStatus.APPROVED, currentDate);
+
+        Optional<BookingInItemDto> lastBooking = bookings.stream()
+                .filter(
+                        booking -> booking.getItem().getId().equals(item.getId())
+                                && booking.getStatus() == BookingStatus.APPROVED
+                                && booking.getStart().isBefore(currentDate)
+                )
+                .max(Comparator.comparing(BookingInItemDto::getEnd));
+
+        Optional<BookingInItemDto> nextBooking = bookings.stream()
+                .filter(booking -> booking.getItem().getId().equals(item.getId())
+                        && booking.getStatus() == BookingStatus.APPROVED
+                        && booking.getStart().isAfter(currentDate)
+                )
+                .min(Comparator.comparing(booking -> booking.getStart()));
+
         return ItemMapper.mapToItemDto(item, lastBooking, nextBooking, comments);
     }
 
