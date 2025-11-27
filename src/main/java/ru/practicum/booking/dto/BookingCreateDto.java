@@ -1,18 +1,18 @@
-package ru.practicum.booking;
+package ru.practicum.booking.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookingDto {
+public class BookingCreateDto {
     private Long id;
-    private LocalDate startDate;
-    private LocalDate endDate;
+
     private Long itemId;
-    private boolean isApproved;
+    private LocalDateTime start;
+    private LocalDateTime end;
 }
