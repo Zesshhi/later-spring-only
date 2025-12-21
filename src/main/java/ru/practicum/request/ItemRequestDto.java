@@ -1,26 +1,26 @@
 package ru.practicum.request;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.user.User;
+import ru.practicum.request.dto.ItemAnswerDto;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "requests")
-@Entity
 public class ItemRequestDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User userId;
-
-    @Column
+    @NotBlank
     private String description;
+
+    private LocalDateTime created;
+
+    private List<ItemAnswerDto> items = new ArrayList<>();
 }
