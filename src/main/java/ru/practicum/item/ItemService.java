@@ -18,6 +18,8 @@ import ru.practicum.item.comment.dto.CommentCreateDto;
 import ru.practicum.item.comment.dto.CommentDto;
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemResponseDto;
+import ru.practicum.request.ItemRequest;
+import ru.practicum.request.ItemRequestRepository;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
@@ -35,12 +37,13 @@ public class ItemService {
     private final CommentRepository commentRepository;
     private final UserService userService;
     private final BookingService bookingService;
+    private final ItemRequestRepository itemRequestRepository;
 
 
     public ItemDto saveItem(ItemDto itemDto, Long userId) {
         User user = userService.getUserById(userId);
 
-        Item item = ItemMapper.mapToNewItem(itemDto);
+        Item item = createItemFromDto(itemDto);
 
         item.setOwner(user);
 
@@ -152,6 +155,17 @@ public class ItemService {
         commentRepository.save(comment);
 
         return CommentMapper.mapToCommentDto(comment);
+    }
+
+    private Item createItemFromDto(ItemDto itemDto) {
+        if (itemDto.getRequestId() == null) {
+            return ItemMapper.mapToNewItem(itemDto);
+        }
+
+        ItemRequest request = itemRequestRepository.findById(itemDto.getRequestId())
+                .orElseThrow(() -> new NotFoundException("Запрос с id = " + itemDto.getRequestId() + " не найден"));
+
+        return ItemMapper.mapToNewItem(itemDto, request);
     }
 
     public List<CommentDto> getCommentsByItemId(Long itemId) {

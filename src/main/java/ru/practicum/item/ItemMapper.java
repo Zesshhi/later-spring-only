@@ -5,6 +5,7 @@ import ru.practicum.booking.dto.BookingInItemDto;
 import ru.practicum.item.comment.dto.CommentDto;
 import ru.practicum.item.dto.ItemDto;
 import ru.practicum.item.dto.ItemResponseDto;
+import ru.practicum.request.ItemRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,12 @@ public class ItemMapper {
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
+        return item;
+    }
+
+    public static Item mapToNewItem(ItemDto itemDto, ItemRequest request) {
+        Item item = mapToNewItem(itemDto);
+        item.setRequest(request);
         return item;
     }
 
