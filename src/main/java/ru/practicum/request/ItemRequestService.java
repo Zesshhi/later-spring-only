@@ -44,11 +44,11 @@ public class ItemRequestService {
         userService.getUserById(userId);
 
         List<ItemRequest> requests = itemRequestRepository.findAllByRequester_IdOrderByCreatedDesc(userId);
-        Map<Long, List<ItemRequestAnswerDto>> answers = getAnswersByRequestIds(
+        Map<Long, List<ItemRequestAnswerDto>> items = getItemsByRequestIds(
                 requests.stream().map(ItemRequest::getId).toList()
         );
 
-        return ItemRequestMapper.mapToItemRequestDto(requests, answers);
+        return ItemRequestMapper.mapToItemRequestDto(requests, items);
     }
 
     public List<ItemRequestResponseDto> getOtherUsersRequests(Long userId, int from, int size) {
@@ -61,11 +61,11 @@ public class ItemRequestService {
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"));
 
         List<ItemRequest> requests = itemRequestRepository.findAllByRequester_IdNot(userId, pageRequest).stream().toList();
-        Map<Long, List<ItemRequestAnswerDto>> answers = getAnswersByRequestIds(
+        Map<Long, List<ItemRequestAnswerDto>> items = getItemsByRequestIds(
                 requests.stream().map(ItemRequest::getId).toList()
         );
 
-        return ItemRequestMapper.mapToItemRequestDto(requests, answers);
+        return ItemRequestMapper.mapToItemRequestDto(requests, items);
     }
 
     public ItemRequestResponseDto getRequestById(Long userId, Long requestId) {
@@ -74,11 +74,11 @@ public class ItemRequestService {
         ItemRequest request = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос с id = " + requestId + " не найден"));
 
-        Map<Long, List<ItemRequestAnswerDto>> answers = getAnswersByRequestIds(List.of(request.getId()));
-        return ItemRequestMapper.mapToItemRequestDto(request, answers.getOrDefault(request.getId(), Collections.emptyList()));
+        Map<Long, List<ItemRequestAnswerDto>> items = getItemsByRequestIds(List.of(request.getId()));
+        return ItemRequestMapper.mapToItemRequestDto(request, items.getOrDefault(request.getId(), Collections.emptyList()));
     }
 
-    private Map<Long, List<ItemRequestAnswerDto>> getAnswersByRequestIds(List<Long> requestIds) {
+    private Map<Long, List<ItemRequestAnswerDto>> getItemsByRequestIds(List<Long> requestIds) {
         if (requestIds.isEmpty()) {
             return Collections.emptyMap();
         }

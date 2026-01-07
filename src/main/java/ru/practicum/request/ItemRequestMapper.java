@@ -23,22 +23,22 @@ public class ItemRequestMapper {
 
     public static ItemRequestResponseDto mapToItemRequestDto(
             ItemRequest itemRequest,
-            List<ItemRequestAnswerDto> answers
+            List<ItemRequestAnswerDto> items
     ) {
         return new ItemRequestResponseDto(
                 itemRequest.getId(),
                 itemRequest.getDescription(),
                 itemRequest.getCreated(),
-                answers != null ? answers : Collections.emptyList()
+                items != null ? items : Collections.emptyList()
         );
     }
 
     public static List<ItemRequestResponseDto> mapToItemRequestDto(
             List<ItemRequest> itemRequests,
-            Map<Long, List<ItemRequestAnswerDto>> answers
+            Map<Long, List<ItemRequestAnswerDto>> items
     ) {
         return itemRequests.stream()
-                .map(request -> mapToItemRequestDto(request, answers.getOrDefault(request.getId(), Collections.emptyList())))
+                .map(request -> mapToItemRequestDto(request, items.getOrDefault(request.getId(), Collections.emptyList())))
                 .toList();
     }
 }

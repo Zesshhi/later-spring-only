@@ -18,7 +18,7 @@ public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
 
-    @PostMapping("/request")
+    @PostMapping("/requests")
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestResponseDto createRequest(
             @RequestHeader(USER_HEADER_NAME) Long userId,
@@ -27,7 +27,7 @@ public class ItemRequestController {
         return itemRequestService.createRequest(createDto, userId);
     }
 
-    @GetMapping("/request")
+    @GetMapping("/requests")
     public List<ItemRequestResponseDto> getUserRequests(
             @RequestHeader(USER_HEADER_NAME) Long userId
     ) {
@@ -43,7 +43,7 @@ public class ItemRequestController {
         return itemRequestService.getOtherUsersRequests(userId, from, size);
     }
 
-    @GetMapping("/request/{requestId}")
+    @GetMapping("/requests/{requestId}")
     public ItemRequestResponseDto getRequestById(
             @RequestHeader(USER_HEADER_NAME) Long userId,
             @PathVariable Long requestId

@@ -14,5 +14,5 @@ public class ItemRequestResponseDto {
     private Long id;
     private String description;
     private LocalDateTime created;
-    private List<ItemRequestAnswerDto> answers;
+    private List<ItemRequestAnswerDto> items;
 }
