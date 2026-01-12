@@ -1,6 +1,5 @@
 package ru.practicum.request;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ public class ItemRequestController {
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestResponseDto createRequest(
             @RequestHeader(USER_HEADER_NAME) Long userId,
-            @Valid @RequestBody ItemRequestCreateDto createDto
+            @RequestBody ItemRequestCreateDto createDto
     ) {
         return itemRequestService.createRequest(createDto, userId);
     }

@@ -1,6 +1,5 @@
 package ru.practicum.booking;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     public BookingResponseDto createBooking(
             @RequestHeader(USER_HEADER_NAME) Long bookerId,
-            @Valid @RequestBody BookingCreateDto bookingCreateDto
+            @RequestBody BookingCreateDto bookingCreateDto
     ) {
         return bookingService.createBooking(bookingCreateDto, bookerId);
     }

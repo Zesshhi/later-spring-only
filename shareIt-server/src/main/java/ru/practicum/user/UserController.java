@@ -1,6 +1,5 @@
 package ru.practicum.user;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +17,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto saveNewUser(@Valid @RequestBody UserDto user) {
+    public UserDto saveNewUser(@RequestBody UserDto user) {
         return userService.saveUser(user);
     }
 

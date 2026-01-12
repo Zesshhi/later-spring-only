@@ -1,7 +1,6 @@
 package ru.practicum.item;
 
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,7 @@ public class ItemController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemDto createItem(
-            @Valid @RequestBody ItemDto itemDto,
+            @RequestBody ItemDto itemDto,
             @RequestHeader(USER_HEADER_NAME) Long userId
     ) {
         return itemService.saveItem(itemDto, userId);
@@ -67,7 +66,7 @@ public class ItemController {
     public CommentDto addComment(
             @RequestHeader(USER_HEADER_NAME) Long authorId,
             @PathVariable Long itemId,
-            @Valid @RequestBody CommentCreateDto commentDto
+            @RequestBody CommentCreateDto commentDto
     ) {
         return itemService.createComment(authorId, itemId, commentDto);
     }
