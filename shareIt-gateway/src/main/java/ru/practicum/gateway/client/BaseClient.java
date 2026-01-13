@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
@@ -55,6 +56,12 @@ public class BaseClient {
             headers.set(USER_HEADER, String.valueOf(userId));
         }
         HttpEntity<Object> requestEntity = new HttpEntity<>(body, headers);
-        return rest.exchange(path, method, requestEntity, Object.class, parameters);
+        try {
+            return rest.exchange(path, method, requestEntity, Object.class, parameters);
+        } catch (HttpStatusCodeException exception) {
+            return ResponseEntity
+                    .status(exception.getStatusCode())
+                    .body(exception.getResponseBodyAsByteArray());
+        }
     }
 }
