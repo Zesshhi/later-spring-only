@@ -21,7 +21,7 @@ public class BaseClient {
     protected BaseClient(RestTemplateBuilder builder, String serverUrl) {
         this.rest = builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .requestFactory(HttpComponentsClientHttpRequestFactory::new)
+                .requestFactory(settings -> new HttpComponentsClientHttpRequestFactory())
                 .build();
     }
 
