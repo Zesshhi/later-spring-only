@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.InvalidDataException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.item.Item;
 import ru.practicum.item.ItemRepository;
@@ -53,10 +52,6 @@ public class ItemRequestService {
 
     public List<ItemRequestResponseDto> getOtherUsersRequests(Long userId, int from, int size) {
         userService.getUserById(userId);
-
-        if (size <= 0 || from < 0) {
-            throw new InvalidDataException("Параметры пагинации заданы некорректно.");
-        }
 
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"));
 

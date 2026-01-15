@@ -3,6 +3,7 @@ package ru.practicum.request;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.exception.InvalidDataException;
 import ru.practicum.request.dto.ItemRequestCreateDto;
 import ru.practicum.request.dto.ItemRequestResponseDto;
 
@@ -39,6 +40,10 @@ public class ItemRequestController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size
     ) {
+        if (size <= 0 || from < 0) {
+            throw new InvalidDataException("Параметры пагинации заданы некорректно.");
+        }
+
         return itemRequestService.getOtherUsersRequests(userId, from, size);
     }
 
